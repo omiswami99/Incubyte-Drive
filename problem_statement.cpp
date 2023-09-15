@@ -3,118 +3,136 @@ using namespace std;
 
 class Chandrayaan {
 private:
-    int x, y, z;
-    string dir;  // directions
-    map<string, vector<string>> changingDir; 
+    struct Position {
+        int x, y, z;
+    };
+
+    Position position;
+    vector<string> directions;
+    string currentDirection;
 
 public:
-    Chandrayaan() : x(0), y(0), z(0), dir("N") {
-        changingDir = {
-            {"N", {"W", "E"}},
-            {"S", {"E", "W"}},
-            {"E", {"N", "S"}},
-            {"W", {"S", "N"}},
-            {"Up", {"Down", "Up"}},
-            {"Down", {"Up", "Down"}}
-        };
-    }
+    Chandrayaan() : position({0, 0, 0}), directions({"N", "E", "S", "W", "Up", "Down"}), currentDirection("N") {}
 
-    void move(char instruction) {
-        if (instruction == 'f') {
-            if (dir == "N") y += 1;
-            else if (dir == "S") y -= 1;
-            else if (dir == "E") x += 1;
-            else if (dir == "W") x -= 1;
-            else if (dir == "Up") z += 1;
-            else if (dir == "Down") z -= 1;
-            
-        } else if (instruction == 'b') {
-            if (dir == "N") y -= 1;
-            else if (dir == "S") y += 1;
-            else if (dir == "E") x -= 1;
-            else if (dir == "W") x += 1;
-            else if (dir == "Up") z -= 1;
-            else if (dir == "Down") z += 1;
+    void moveForward() {
+        switch (currentDirection[0]) {
+            case 'N':
+                position.y++;
+                break;
+            case 'E':
+                position.x++;
+                break;
+            case 'S':
+                position.y--;
+                break;
+            case 'W':
+                position.x--;
+                break;
+            case 'U':
+                position.z++;
+                break;
+            case 'D':
+                position.z--;
+                break;
         }
     }
 
-    void turn(char instruction) {
-        if (instruction == 'l') {
-            dir = changingDir[dir][0];
-        } else if (instruction == 'r') {
-            dir = changingDir[dir][1];
+    void moveBackward() {
+        switch (currentDirection[0]) {
+            case 'N':
+                position.y--;
+                break;
+            case 'E':
+                position.x--;
+                break;
+            case 'S':
+                position.y++;
+                break;
+            case 'W':
+                position.x++;
+                break;
+            case 'U':
+                position.z--;
+                break;
+            case 'D':
+                position.z++;
+                break;
         }
     }
 
-    void angle(char instruction) {
-        if (instruction == 'u') {
-            if (dir == "N" || dir == "S") dir = "Up";
-            else if (dir == "Up") dir = "S";
-            else if (dir == "Down") dir = "N";
-        
-        } else if (instruction == 'd') {
-            if (dir == "N" || dir == "S") dir = "Down";
-            else if (dir == "Up") dir = "N";
-            else if (dir == "Down") dir = "S";
+    void turnLeft() {
+        if (currentDirection == "N")  currentDirection = "W";
+        else if (currentDirection == "E")  currentDirection = "N";
+        else if (currentDirection == "S")  currentDirection = "E";
+        else if (currentDirection == "W")  currentDirection = "S";
+        else if (currentDirection == "Up")  currentDirection = "N";
+        else if (currentDirection == "Down")  currentDirection = "N";
+    }
+
+    void turnRight() {
+        if (currentDirection == "N") currentDirection = "E";
+        else if (currentDirection == "E") currentDirection = "S";
+        else if (currentDirection == "S") currentDirection = "W";
+        else if (currentDirection == "W") currentDirection = "N";
+        else if (currentDirection == "Up") currentDirection = "N";
+        else if (currentDirection == "Down") currentDirection = "N";
+    }
+
+    void turnUp() {
+        if (currentDirection != "Up" && currentDirection != "Down")
+            currentDirection = "Up";
+    }
+
+    void turnDown() {
+        if (currentDirection != "Up" && currentDirection != "Down")
+            currentDirection = "Down";
+    }
+
+    void executeCommands(const vector<char>& commands) {
+        for (char command : commands) {
+            switch (command) {
+                case 'f':
+                    moveForward();
+                    break;
+                case 'b':
+                    moveBackward();
+                    break;
+                case 'l':
+                    turnLeft();
+                    break;
+                case 'r':
+                    turnRight();
+                    break;
+                case 'u':
+                    turnUp();
+                    break;
+                case 'd':
+                    turnDown();
+                    break;
+                default:
+                    // Invalid command, ignore it
+                    break;
+            }
+            cout << '"' << command << "\" - (" << position.x << ", " << position.y << ", " << position.z << ") - " << currentDirection << endl;
         }
     }
 
-    int getX() {
-        return x;
+    pair<Position, string> finalPosition() {
+        return {position, currentDirection};
     }
-
-    int getY() {
-        return y;
-    }
-
-    int getZ() {
-        return z;
-    }
-
-    string getDirection() {
-        return dir;
-    }
-    
 };
-int main(){
-    Chandrayaan chandrayaan3;
-    string commands = "frubl";
-    for (char command : commands) {
-        if (command == 'f' || command == 'b') chandrayaan3.move(command);
-        else if (command == 'l' || command == 'r') chandrayaan3.turn(command);
-        else if (command == 'u' || command == 'd') chandrayaan3.angle(command);
-    }
 
-    cout << "Final Position: (" << chandrayaan3.getX() << ", " << chandrayaan3.getY() << ", " << chandrayaan3.getZ() << ")\n";
-    cout << "Final Direction: " << chandrayaan3.getDirection() << "\n";
+int main() {
+    Chandrayaan chandrayaan3;
+    vector<char> commands = {'f', 'r', 'u', 'b', 'l'};
     
+    cout << "Initial Direction: " << chandrayaan3.finalPosition().second << endl;
+
+    chandrayaan3.executeCommands(commands);
+    auto finalState = chandrayaan3.finalPosition();
+    
+    cout << "Final Position: (" << finalState.first.x << ", " << finalState.first.y << ", " << finalState.first.z << ")" << endl;
+    cout << "Final Direction: " << finalState.second << endl;
+
     return 0;
 }
-
-// TO check the test cases for various angle:
-
-// void runTests() {
-//     Chandrayaan chandrayaan3;
-
-//     // Test move
-//     chandrayaan3.move('f');
-//     if (chandrayaan3.getX() == 0 && chandrayaan3.getY() == 1 && chandrayaan3.getZ() == 0)
-//         cout << "Move test passed\n";
-//     else
-//         cout << "Move test failed\n";
-
-//     // Test turn
-//     chandrayaan3.turn('r');
-//     if (chandrayaan3.getDirection() == "E")
-//         cout << "Turn test passed\n";
-//     else
-//         cout << "Turn test failed\n";
-
-//     // Test angle
-//     chandrayaan3.angle('u');
-//     if (chandrayaan3.getDirection() == "Up")
-//         cout << "Angle test passed\n";
-//     else
-//         cout << "Angle test failed\n";
-// }
-
