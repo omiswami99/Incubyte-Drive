@@ -58,9 +58,35 @@ public:
             else if (dir == "Down") dir = "S";
         }
     }
+
+    int getX() {
+        return x;
+    }
+
+    int getY() {
+        return y;
+    }
+
+    int getZ() {
+        return z;
+    }
+
+    string getDirection() {
+        return dir;
+    }
     
 };
 int main(){
+    Chandrayaan chandrayaan3;
+    string commands = "frubl";
+    for (char command : commands) {
+        if (command == 'f' || command == 'b') chandrayaan3.move(command);
+        else if (command == 'l' || command == 'r') chandrayaan3.turn(command);
+        else if (command == 'u' || command == 'd') chandrayaan3.angle(command);
+    }
 
-  return 0;
+    cout << "Final Position: (" << chandrayaan3.getX() << ", " << chandrayaan3.getY() << ", " << chandrayaan3.getZ() << ")\n";
+    cout << "Final Direction: " << chandrayaan3.getDirection() << "\n";
+    
+    return 0;
 }
