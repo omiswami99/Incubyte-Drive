@@ -90,3 +90,31 @@ int main(){
     
     return 0;
 }
+
+// TO check the test cases for various angle:
+
+// void runTests() {
+//     Chandrayaan chandrayaan3;
+
+//     // Test move
+//     chandrayaan3.move('f');
+//     if (chandrayaan3.getX() == 0 && chandrayaan3.getY() == 1 && chandrayaan3.getZ() == 0)
+//         cout << "Move test passed\n";
+//     else
+//         cout << "Move test failed\n";
+
+//     // Test turn
+//     chandrayaan3.turn('r');
+//     if (chandrayaan3.getDirection() == "E")
+//         cout << "Turn test passed\n";
+//     else
+//         cout << "Turn test failed\n";
+
+//     // Test angle
+//     chandrayaan3.angle('u');
+//     if (chandrayaan3.getDirection() == "Up")
+//         cout << "Angle test passed\n";
+//     else
+//         cout << "Angle test failed\n";
+// }
+
